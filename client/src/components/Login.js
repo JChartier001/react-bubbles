@@ -22,7 +22,7 @@ const handleSubmit = e => {
         .post("/api/login", data)
         .then(response => {                
             localStorage.setItem('token', response.data.payload)
-            props.history.push('/friends')
+            props.history.push('/bubbles')
         })
     .catch(err => {
         setError(err.response.data.message)
