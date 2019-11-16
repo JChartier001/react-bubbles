@@ -10,7 +10,10 @@ const ColorList = ({colors, updateColors}) => {
   
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
-
+  const [NewColor, setNewColor] = useState({
+    
+  })
+  
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
@@ -20,25 +23,37 @@ const ColorList = ({colors, updateColors}) => {
     e.preventDefault();
     axiosWithAuth()
     .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
-    .then(response=> {
-      console.log(response.data)
-      axiosWithAuth()
-      .get('http://localhost:5000/api/colors')
-    .then(response => {      
-     updateColors(response.data)
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  }, [colors.id])      
-    
+    .then(response=> {      
+          axiosWithAuth()
+          .get('http://localhost:5000/api/colors')
+          .then(response => {      
+          updateColors(response.data)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          })      
     .catch(error => {
       console.log(error)
     })    
   };
 
-  const deleteColor = (e,color) => {
-    // make a delete request to delete this color
+  const deleteColor = (colors) => {
+    axiosWithAuth()
+    .delete(`http://localhost:5000/api/colors/${colors.id}`)
+    .then(response => {
+        axiosWithAuth()
+        .get('http://localhost:5000/api/colors')
+        .then(response => {      
+        updateColors(response.data)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    })
+    .catch(error => {
+      console.log(error)
+    })
   };
 
   return (
