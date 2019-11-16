@@ -10,9 +10,7 @@ const ColorList = ({colors, updateColors}) => {
   
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
-  const [NewColor, setNewColor] = useState({
-    
-  })
+  const [newColor, setNewColor] = useState(initialColor)
   
   const editColor = color => {
     setEditing(true);
@@ -24,6 +22,26 @@ const ColorList = ({colors, updateColors}) => {
     axiosWithAuth()
     .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
     .then(response=> {      
+          axiosWithAuth()
+          .get('http://localhost:5000/api/colors')
+          .then(response => {      
+          updateColors(response.data)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          })      
+    .catch(error => {
+      console.log(error)
+    })    
+  };
+
+  const addNewColor = e => {
+    e.preventDefault();
+    axiosWithAuth()
+    .post(`http://localhost:5000/api/colors/`, newColor)
+    .then(response=> {     
+      console.log(response) 
           axiosWithAuth()
           .get('http://localhost:5000/api/colors')
           .then(response => {      
@@ -109,8 +127,35 @@ const ColorList = ({colors, updateColors}) => {
           </div>
         </form>
       )}
-      <div className="spacer" />
+      <div 
+      // className="spacer"
+       />
       {/* stretch - build another form here to add a color */}
+      <h2>Add New Color</h2>
+      <form onSubmit={addNewColor}>
+      <label>
+            color name:
+            <input
+              onChange={e =>
+                setNewColor({ ...newColor, color: e.target.value })
+              }
+              value={newColor.color}
+            />
+          </label>
+          <label>
+            hex code:
+            <input
+              onChange={e =>
+                setNewColor({
+                  ...newColor,
+                  code: { hex: e.target.value }
+                })
+              }
+              value={newColor.code.hex}
+            />
+          </label>
+          <button type="submit">Save</button>
+          </form>
     </div>
   );
 };
